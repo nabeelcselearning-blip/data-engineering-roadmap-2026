@@ -23,3 +23,15 @@ shape_type = (
 
 # print(calculate_area(base, height))
 print(f"Area of {shape_type} is {calculate_area_2(base, height, shape_type)}")
+
+
+def pattern(num):
+
+    for i in range(num):
+        for j in range(0, i + 1):
+            print("*", end="")
+        print()
+
+
+num = int(input("Enter a number to generate pattern: "))
+pattern(num)
