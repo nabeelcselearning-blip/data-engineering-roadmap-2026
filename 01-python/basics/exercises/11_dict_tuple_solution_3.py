@@ -11,12 +11,12 @@ def circle_calc(radius):
     circumfrence = 2 * math.pi * radius
     diameter = radius * 2
 
-    return [area, circumfrence, diameter]
+    return area, circumfrence, diameter
 
 
 input_user = int(input("Enter circle's radius here: "))
-ans = circle_calc(input_user)
+area, circumfrence, diameter = circle_calc(input_user)
 
-print(f"Circle's Area is: {ans[0]:.2f}")
-print(f"Circle's circumfrence is: {ans[1]:.2f}")
-print(f"Circle's diamter is: {ans[2]:.2f}")
+print(f"Circle's Area is: {area:.2f}")
+print(f"Circle's circumfrence is: {circumfrence:.2f}")
+print(f"Circle's diamter is: {diameter:.2f}")
