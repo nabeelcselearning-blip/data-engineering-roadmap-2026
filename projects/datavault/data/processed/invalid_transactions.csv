@@ -1,0 +1,8 @@
+transaction_id,customer_id,product,quantity,price,date,total_amount,error_msg
+T011,C105,Mouse,-2,800,2026-08-18,,quantity is less than 0 or 0
+T012,,Keyboard,1,2500,2026-08-18,,customer_id is empty
+T013,C106,Monitor,0,15000,2026-08-18,,quantity is less than 0 or 0
+T014,C107,Laptop,1,-75000,2026-08-18,,Price is less than 0
+T015,C108,Webcam,1,4500,not-a-date,,Date invalid
+T010,C109,Mouse,2,800,2026-08-18,,duplicate transaction_id
+,C109,Mouse,2,800,2026-08-18,,transaction_id is empty

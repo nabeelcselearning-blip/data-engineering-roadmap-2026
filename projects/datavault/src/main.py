@@ -1,4 +1,51 @@
 import csv
+from datetime import datetime
+
+
+def is_invalid_row(row):
+
+    validity = True
+    if len(row["transaction_id"]) == 0:
+        validity = False
+        msg = "transaction_id is empty"
+    elif len(row["customer_id"]) == 0:
+        validity = False
+        msg = "customer_id is empty"
+    elif row["transaction_id"] in set_transaction_id:
+        validity = False
+        msg = "duplicate transaction_id"
+
+    try:
+        quantity = int(row["quantity"])
+        if quantity <= 0:
+            validity = False
+            msg = "quantity is less than 0 or 0"
+
+    except ValueError:
+        validity = False
+        msg = "quantity is not a number"
+
+    try:
+        price = float(row["price"])
+        if price < 0:
+            validity = False
+            msg = "Price is less than 0"
+
+    except ValueError:
+        validity = False
+        msg = "price is not a number"
+    date = row["date"]
+    try:
+        datetime.strptime(date, "%Y-%m-%d")
+    except ValueError:
+        msg = "Date invalid"
+        validity = False
+    if not validity:
+        row["error_msg"] = msg
+        processed__invalid_csv.writerow(row)
+
+    return validity
+
 
 with open("projects/datavault/data/raw/transactions.csv", "r") as rt:
     raw_csv = csv.DictReader(rt)
@@ -6,35 +53,37 @@ with open("projects/datavault/data/raw/transactions.csv", "r") as rt:
     with open(
         "projects/datavault/data/processed/transactions_processed.csv", "w"
     ) as pt:
+        with open(
+            "projects/datavault/data/processed/invalid_transactions.csv", "w"
+        ) as it:
 
-        fields = [
-            "transaction_id",
-            "customer_id",
-            "product",
-            "quantity",
-            "price",
-            "date",
-            "total_amount",
-        ]
-        processed_csv = csv.DictWriter(pt, fieldnames=fields)
+            processed_field = [
+                "transaction_id",
+                "customer_id",
+                "product",
+                "quantity",
+                "price",
+                "date",
+                "total_amount",
+            ]
+            invalid_fields = processed_field + ["error_msg"]
+            processed_csv = csv.DictWriter(pt, fieldnames=processed_field)
+            processed__invalid_csv = csv.DictWriter(it, fieldnames=invalid_fields)
 
-        processed_csv.writeheader()
-        set_transaction_id = set()
-        for row in raw_csv:
+            processed_csv.writeheader()
+            processed__invalid_csv.writeheader()
+            set_transaction_id = set()
+            for row in raw_csv:
 
-            if (
-                len(row["transaction_id"]) == 0
-                or row["transaction_id"] in set_transaction_id
-                or len(row["customer_id"]) == 0
-                or int(row["quantity"]) <= 0
-                or int(row["price"]) < 0
-                # to add invalid dates
-            ):
-                continue
-            set_transaction_id.add(row["transaction_id"])
-            row["quantity"] = int(row["quantity"])
-            row["price"] = float(row["price"])
-            row["total_amount"] = row["quantity"] * row["price"]
-            print(row)
+                validity = is_invalid_row(row)
+                # print(validity)
+                if validity:
 
-            processed_csv.writerow(row)
+                    set_transaction_id.add(row["transaction_id"])
+                    row["quantity"] = int(row["quantity"])
+                    row["price"] = float(row["price"])
+                    row["total_amount"] = row["quantity"] * row["price"]
+                    print(row)
+                    processed_csv.writerow(row)
+                else:
+                    continue
