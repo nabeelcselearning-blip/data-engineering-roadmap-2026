@@ -73,6 +73,11 @@ with open("projects/datavault/data/raw/transactions.csv", "r") as rt:
             processed_csv.writeheader()
             processed__invalid_csv.writeheader()
             set_transaction_id = set()
+
+            customer_spending = {}
+            customer_transactions = {}
+            product_quantity = {}
+
             for row in raw_csv:
 
                 validity = is_invalid_row(row)
@@ -83,7 +88,25 @@ with open("projects/datavault/data/raw/transactions.csv", "r") as rt:
                     row["quantity"] = int(row["quantity"])
                     row["price"] = float(row["price"])
                     row["total_amount"] = row["quantity"] * row["price"]
-                    print(row)
+
+                    customer_spending[row["customer_id"]] = (
+                        customer_spending.get(row["customer_id"], 0)
+                        + row["total_amount"]
+                    )
+
+                    customer_transactions[row["customer_id"]] = (
+                        customer_transactions.get(row["customer_id"], 0) + 1
+                    )
+
+                    product_quantity[row["product"]] = (
+                        product_quantity.get(row["product"], 0) + row["quantity"]
+                    )
+
                     processed_csv.writerow(row)
                 else:
                     continue
+            print(f"total money spend by each customer :- \n {customer_spending} \n")
+            print(
+                f"Number of transaction done by each customer:- \n{customer_transactions}\n"
+            )
+            print(f"number of product sold:- \n {product_quantity}\n")
