@@ -19,18 +19,19 @@ with open("projects/datavault/data/raw/transactions.csv", "r") as rt:
         processed_csv = csv.DictWriter(pt, fieldnames=fields)
 
         processed_csv.writeheader()
-
+        set_transaction_id = set()
         for row in raw_csv:
 
             if (
-                len(row["customer_id"]) == 0
+                len(row["transaction_id"]) == 0
+                or row["transaction_id"] in set_transaction_id
+                or len(row["customer_id"]) == 0
                 or int(row["quantity"]) <= 0
                 or int(row["price"]) < 0
-                # to add duplicate transaction_id, invalid dates
-            ):  # this will prevent transaction_id of T012 to processed
-                # print("hahahahhahahahhahhahahhahahhahah")
+                # to add invalid dates
+            ):
                 continue
-
+            set_transaction_id.add(row["transaction_id"])
             row["quantity"] = int(row["quantity"])
             row["price"] = float(row["price"])
             row["total_amount"] = row["quantity"] * row["price"]
