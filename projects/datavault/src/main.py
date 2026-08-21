@@ -105,8 +105,28 @@ with open("projects/datavault/data/raw/transactions.csv", "r") as rt:
                     processed_csv.writerow(row)
                 else:
                     continue
+            highest_spending_customer_value = max(customer_spending.values())
+            highest_spending_customer_key = next(
+                key
+                for key, val in customer_spending.items()
+                if val == highest_spending_customer_value
+            )
+
+            best_selling_product_value = max(product_quantity.values())
+            best_selling_product_key = next(
+                key
+                for key, val in product_quantity.items()
+                if val == best_selling_product_value
+            )
             print(f"total money spend by each customer :- \n {customer_spending} \n")
             print(
                 f"Number of transaction done by each customer:- \n{customer_transactions}\n"
             )
             print(f"number of product sold:- \n {product_quantity}\n")
+
+            print(
+                f"the highest spending customer is: {highest_spending_customer_key} who spends {highest_spending_customer_value}"
+            )
+            print(
+                f"The best selling product is {best_selling_product_key} with sold value = {best_selling_product_value}"
+            )
