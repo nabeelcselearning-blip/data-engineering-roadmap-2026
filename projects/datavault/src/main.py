@@ -28,9 +28,3 @@ with open("projects/datavault/data/raw/transactions.csv", "r") as rt:
             print(row)
 
             processed_csv.writerow(row)
-
-# with open("projects/datavault/data/processed/transactions_processed.csv", "r") as file:
-#     csv_file = csv.DictReader(file)
-
-#     for row in csv_file:
-#         print(row)
