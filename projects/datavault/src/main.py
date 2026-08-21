@@ -22,6 +22,15 @@ with open("projects/datavault/data/raw/transactions.csv", "r") as rt:
 
         for row in raw_csv:
 
+            if (
+                len(row["customer_id"]) == 0
+                or int(row["quantity"]) <= 0
+                or int(row["price"]) < 0
+                # to add duplicate transaction_id, invalid dates
+            ):  # this will prevent transaction_id of T012 to processed
+                # print("hahahahhahahahhahhahahhahahhahah")
+                continue
+
             row["quantity"] = int(row["quantity"])
             row["price"] = float(row["price"])
             row["total_amount"] = row["quantity"] * row["price"]
