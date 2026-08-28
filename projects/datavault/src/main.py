@@ -42,7 +42,7 @@ def is_invalid_row(row):
         validity = False
     if not validity:
         row["error_msg"] = msg
-        processed__invalid_csv.writerow(row)
+        processed_invalid_csv.writerow(row)
 
     return validity
 
@@ -68,15 +68,18 @@ with open("projects/datavault/data/raw/transactions.csv", "r") as rt:
             ]
             invalid_fields = processed_field + ["error_msg"]
             processed_csv = csv.DictWriter(pt, fieldnames=processed_field)
-            processed__invalid_csv = csv.DictWriter(it, fieldnames=invalid_fields)
+            processed_invalid_csv = csv.DictWriter(it, fieldnames=invalid_fields)
 
             processed_csv.writeheader()
-            processed__invalid_csv.writeheader()
+            processed_invalid_csv.writeheader()
             set_transaction_id = set()
 
             customer_spending = {}
             customer_transactions = {}
             product_quantity = {}
+            total_transactions = 0
+            total_revenue = 0
+            Average_transaction_value = 0
 
             for row in raw_csv:
 
@@ -98,11 +101,15 @@ with open("projects/datavault/data/raw/transactions.csv", "r") as rt:
                         customer_transactions.get(row["customer_id"], 0) + 1
                     )
 
+                    total_revenue += row["total_amount"]
+
+                    # Average_transaction_value +=
                     product_quantity[row["product"]] = (
                         product_quantity.get(row["product"], 0) + row["quantity"]
                     )
 
                     processed_csv.writerow(row)
+
                 else:
                     continue
             highest_spending_customer_value = max(customer_spending.values())
@@ -118,15 +125,27 @@ with open("projects/datavault/data/raw/transactions.csv", "r") as rt:
                 for key, val in product_quantity.items()
                 if val == best_selling_product_value
             )
+
+            total_transactions = sum(customer_transactions.values())
+            Average_transaction_value = total_revenue / total_transactions
+            print(f"Total valid transactions: {total_transactions}")
+            print(f"Total revenue: {total_revenue}")
+            print(f"Average transaction value: {Average_transaction_value}")
+
+            print(f"The highest spending customer is: {highest_spending_customer_key}")
+
+            print(f"The highest spending amount: {highest_spending_customer_value}")
+
+            print(
+                f"The best selling product is {best_selling_product_key} with sold value = {best_selling_product_value}"
+            )
+
             print(f"total money spend by each customer :- \n {customer_spending} \n")
             print(
                 f"Number of transaction done by each customer:- \n{customer_transactions}\n"
             )
             print(f"number of product sold:- \n {product_quantity}\n")
 
-            print(
-                f"the highest spending customer is: {highest_spending_customer_key} who spends {highest_spending_customer_value}"
-            )
             print(
                 f"The best selling product is {best_selling_product_key} with sold value = {best_selling_product_value}"
             )
